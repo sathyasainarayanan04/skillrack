@@ -19,3 +19,62 @@ Example Input/Output 4:
 Input: ((Abc){-3}def(x){5}mn){2} 
 Output: aBCaBCaBCdefxxxxxmnaBCaBCaBCdefxxxxxmn
 */
+import java.util.*;
+public class stringExpansionParathesisAndBraces {
+    public static String toggleCase(String string){
+        StringBuilder sb = new StringBuilder();
+        for(int index=0;index<string.length();index++){
+            char ch = string.charAt(index);
+            if(Character.isUpperCase(ch))
+                sb.append(Character.toLowerCase(ch));
+            else if(Character.isLowerCase(ch))
+                sb.append(Character.toUpperCase(ch));
+            else 
+                sb.append(ch);
+        }
+        return sb.toString();
+    }
+    public static String process(String string){
+        Stack<String> stack = new Stack<>();
+        int index=0;
+        while(index<string.length()){
+            char ch = string.charAt(index);
+            if(ch==')'){
+                StringBuilder sb = new StringBuilder();
+                while(!stack.isEmpty() && !stack.peek().equals("(")){
+                    sb.insert(0,stack.pop());
+                }
+                stack.pop();
+                index++;
+                int repeat = 1;
+                if(index<string.length() && string.charAt(index)=='{'){
+                    index++;
+                    int start = index;
+                    while(string.charAt(index)!='}')index++;
+                    repeat = Integer.parseInt(string.substring(start,index));
+                    index++;
+                }
+                String str = sb.toString();
+                if(repeat<0){
+                    str = toggleCase(str);
+                    repeat = -repeat;
+                }
+                for(int k=0;k<repeat;k++)stack.push(str);
+            }
+            else{
+                stack.push(String.valueOf(ch));
+                index++;
+            }
+        }
+        StringBuilder result = new StringBuilder();
+        for(String str : stack){
+            result.append(str);
+        }
+        return result.toString();
+    }
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine();
+        System.out.println(process(input));
+    }
+}
