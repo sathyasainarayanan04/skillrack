@@ -1,0 +1,14 @@
+select s.machine_id, round(avg(s.processingtime),3) as processing_time from
+(select starting.machine_id as machine_id, starting.process_id as process_id, ending.end_time-starting.start_time as processingTime
+from 
+(select machine_id, process_id, timestamp as start_time
+from activity 
+where activity_type = 'start') starting
+join
+(select machine_id, process_id, timestamp as end_time
+from activity
+where activity_type = 'end') ending
+on starting.machine_id = ending.machine_id
+and starting.process_id = ending.process_id) s
+group by s.machine_id
+;
