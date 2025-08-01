@@ -1,0 +1,12 @@
+create function getNthHighestSalary(N in Number) return number 
+IS
+resultvariable number;
+begin
+select distinct salary into resultvariable from(select salary, dense_rank() over(order by salary desc) rnk
+from employee)
+where rnk = n;
+return resultvariable;
+exception when no_data_found
+then return null;
+end;
+
